@@ -7,6 +7,7 @@ from sklearn.tree import plot_tree
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.utils import shuffle
 import seaborn as sns
 import sys
 import csv
@@ -41,10 +42,15 @@ def Regressionmodel(target_data, model):
     
     # extract the independent variables (X) and dependent variable (y)
     X = data[['COAL, Thousand Short Tons', 'NATURALGAS, Billion Cubic Feet', 'ELECTRICITY, Million Kilowatthours',
-             'PETRO_INDUSTRIAL, Thousand Barrels per Day', 'PETRO_RESIDENTIAL_COMMERCIAL, Thousand Barrels per Day',
-             'PETRO_TRANSPORTATION_ELECTRICPOWER, Thousand Barrels per Day']]
+              'PETRO_INDUSTRIAL, Thousand Barrels per Day', 'PETRO_RESIDENTIAL, Thousand Barrels per Day',
+              'PETRO_COMMERCIAL, Thousand Barrels per Day', 'PETRO_TRANSPORTATION, Thousand Barrels per Day',
+              'PETRO_ELECTRICPOWER, Thousand Barrels per Day']]
+
     y_lca = data['CO2_ based on LCA calculation (Million Metric Tons)']
     y_ml = data['CO2, Million Metric Tons']
+
+    # Shuffle data
+    X, y_ml = shuffle(X, y_ml, random_state = 42)
 
     X_train_ml, X_test_ml, y_train_ml, y_test_ml = train_test_split(X, y_ml, test_size=0.3, random_state=42)
     
@@ -89,7 +95,7 @@ def is_sublist(list1, list2):
     
     # Iterate through list2 using sliding window
     for i in range(len2 - len1 + 1):
-        if list2[i:i+len1] == list1:
+        if set(list2[i:i+len1]) == set(list1):
             return True
     
     return False
